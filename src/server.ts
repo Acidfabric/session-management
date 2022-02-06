@@ -18,9 +18,10 @@ app.get('/', async (_req, res) => {
 
 app.get('/callback', async (req, res) => {
   if (!req.query.code) throw new SessionError('code is not defined');
+  if (typeof req.query.code !== 'string') throw new SessionError('code is not a string');
 
   try {
-    const sessionId = createNewSession(req.query.code as string);
+    const sessionId = await createNewSession(req.query.code);
 
     res.cookie('sessionId', sessionId);
     res.status(200);
