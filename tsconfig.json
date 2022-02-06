@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "commonjs",
+    "lib": [
+      "esnext"
+    ],
+    "sourceMap": true,
+    "outDir": "./build",
+    "rootDir": "./src",
+    "strict": true ,
+    "noImplicitAny": true ,
+    "strictNullChecks": true ,
+    "noUnusedLocals": true ,
+    "noUnusedParameters": true ,
+    "noImplicitReturns": true ,
+    "noFallthroughCasesInSwitch": true ,
+    "moduleResolution": "node" ,
+    "baseUrl": "./src" ,
+    "esModuleInterop": true ,
+    "skipLibCheck": true ,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules"],
+}

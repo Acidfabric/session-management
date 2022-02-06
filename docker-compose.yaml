@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  session_management:
+    build: .
+    restart: unless-stopped
+    environment:
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      OIDC_IS_PKCE: ${OIDC_IS_PKCE}
+      OIDC_ISSUER: ${OIDC_ISSUER}
+      OIDC_AUTHORIZE_ENDPOINT: ${OIDC_AUTHORIZE_ENDPOINT}
+      OIDC_TOKEN_ENDPOINT: ${OIDC_TOKEN_ENDPOINT}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_SCOPE: ${OIDC_SCOPE}
+      OIDC_RESPONSE_TYPE: ${OIDC_RESPONSE_TYPE}
+      OIDC_CHALANGE_CODE: ${OIDC_CHALANGE_CODE}
+      OIDC_CALLBACK_URI: ${OIDC_CALLBACK_URI}
+      OIDC_GRANT_TYPE: ${OIDC_GRANT_TYPE}
+      OIDC_REFRESH_GRANT_TYPE: ${OIDC_REFRESH_GRANT_TYPE}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+    ports:
+      - '4002:4002'
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+volumes:
+  mysql:
