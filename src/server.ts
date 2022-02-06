@@ -2,9 +2,10 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
-import { PORT } from 'constants/uri';
-import { authorize, createNewSession } from 'services';
+import { HOST, PORT } from 'constants/uri';
+import { authorize, createNewSession, removeSession } from 'services';
 import { buildAuthorizationLink, logger } from 'lib';
+import { SessionError } from 'errors';
 
 const app = express();
 
@@ -16,16 +17,15 @@ app.get('/', async (_req, res) => {
 });
 
 app.get('/callback', async (req, res) => {
-  if (!req.query.code) throw new Error('code is not defined');
+  if (!req.query.code) throw new SessionError('code is not defined');
 
   try {
     const sessionId = createNewSession(req.query.code as string);
 
     res.cookie('sessionId', sessionId);
-    res.send('ok');
+    res.status(200);
   } catch (error) {
     logger.error(error);
-
     res.status(500);
   }
 });
@@ -40,14 +40,31 @@ app.get('/authorize', async (req, res) => {
   try {
     await authorize(sessionId);
 
-    res.send('ok');
+    res.status(200);
   } catch (error) {
     logger.error(error);
+    res.status(500);
+  }
+});
 
+app.get('/logout', async (req, res) => {
+  const { sessionId } = req.cookies;
+
+  if (!sessionId) {
+    logger.debug('sessionId is not defined');
+    res.status(200);
+  }
+
+  try {
+    await removeSession(sessionId);
+
+    res.status(200);
+  } catch (error) {
+    logger.error(error);
     res.status(500);
   }
 });
 
 app.listen(PORT, () => {
-  logger.info(`Express is listening at http://localhost:${PORT}`);
+  logger.info(`Express is listening at http://${HOST}:${PORT}`);
 });

@@ -10,4 +10,4 @@ class SessionError extends Error {
   }
 }
 
-export default SessionError;
+export { SessionError };

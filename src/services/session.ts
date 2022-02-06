@@ -2,7 +2,8 @@ import { randomBytes } from 'crypto';
 import jwt from 'jsonwebtoken';
 
 import { AUTH_SECRET } from 'constants/auth';
-import { getSessionData, saveSession, updateSession } from 'data';
+import { deleteSession, getSessionData, saveSession, updateSession } from 'data';
+import { SessionError } from 'errors';
 import {
   buildRefreshTokenOptions,
   buildTokenOptions,
@@ -36,7 +37,7 @@ async function authorize(sessionId: string) {
   const hashedSessionId = getSessionHash(sessionId);
   const sessionData = await getSessionData(hashedSessionId);
 
-  if (!sessionData) throw new Error('session is not found');
+  if (!sessionData) throw new SessionError('invalid session id');
 
   try {
     jwt.verify(sessionData.accessToken, AUTH_SECRET);
@@ -44,24 +45,27 @@ async function authorize(sessionId: string) {
     if (error instanceof jwt.TokenExpiredError) {
       const refreshToken = buildRefreshTokenOptions(sessionData.refreshToken);
       const token = await getRefreshToken(refreshToken);
-      const encryptedIdToken = encrypt(token.id_token);
 
-      await updateSession({
-        sessionId: hashedSessionId,
+      await updateSession(hashedSessionId, {
         accessToken: token.access_token,
-        initVector: encryptedIdToken.initVector,
-        idToken: encryptedIdToken.content,
         refreshToken: token.refresh_token,
-        createdAt: new Date(),
       });
 
       return token.access_token;
     }
 
-    throw error;
+    if (error instanceof Error) {
+      throw new SessionError(error.message);
+    }
   }
 
   return sessionData.accessToken;
 }
 
-export { createNewSession, authorize };
+async function removeSession(sessionId: string) {
+  const hashedSessionId = getSessionHash(sessionId);
+
+  await deleteSession(hashedSessionId);
+}
+
+export { createNewSession, authorize, removeSession };

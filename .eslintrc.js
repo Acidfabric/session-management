@@ -13,9 +13,6 @@ module.exports = {
       parserOptions: {
         project: ['./tsconfig.json'],
       },
-    },
-    {
-      files: ['**/*.ts'],
       rules: {
         'import/prefer-default-export': 'off',
       },

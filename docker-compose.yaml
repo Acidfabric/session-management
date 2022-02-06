@@ -7,6 +7,8 @@ services:
     environment:
       HOST: ${HOST}
       PORT: ${PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY: ${SECRET_KEY}
       OIDC_IS_PKCE: ${OIDC_IS_PKCE}

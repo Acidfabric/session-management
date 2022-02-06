@@ -1,6 +1,7 @@
 import { URL } from 'url';
 import { randomBytes, createHash } from 'crypto';
 
+import { SessionError } from 'errors';
 import { ITokenArgument } from 'interfaces';
 import {
   AUTH_CLIENT_ID,
@@ -44,7 +45,7 @@ function buildAuthorizationLink(codeVerifier?: string) {
   authorizationEndpoint.searchParams.append('scope', AUTH_SCOPE);
 
   if (AUTH_IS_PKCE) {
-    if (!codeVerifier) throw new Error('code_verifier is not defined');
+    if (!codeVerifier) throw new SessionError('code_verifier is not defined');
 
     authorizationEndpoint.searchParams.append('code_challenge_method', AUTH_CHALANGE_CODE);
     authorizationEndpoint.searchParams.append(
@@ -65,7 +66,7 @@ function buildTokenOptions(code: string, codeVerifier?: string) {
   };
 
   if (AUTH_IS_PKCE) {
-    if (!codeVerifier) throw new Error('code_verifier is not defined');
+    if (!codeVerifier) throw new SessionError('code_verifier is not defined');
 
     options.code_verifier = codeVerifier;
   } else {
