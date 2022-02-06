@@ -1,14 +1,17 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
 
 import { HOST, PORT } from 'constants/uri';
+import { SERVICE_NAME } from 'constants/config';
 import { authorize, createNewSession, removeSession } from 'services';
 import { buildAuthorizationLink, logger } from 'lib';
 import { SessionError } from 'errors';
 
 const app = express();
 
+app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -67,5 +70,5 @@ app.get('/logout', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  logger.info(`Express is listening at http://${HOST}:${PORT}`);
+  logger.info(`${SERVICE_NAME} is listening at http://${HOST}:${PORT}`);
 });
