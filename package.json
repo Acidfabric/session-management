@@ -6,6 +6,7 @@
   "scripts": {
     "build": "esbuild src/server.ts --bundle --platform=node --external:./node_modules/* --outfile=build/server.js",
     "start": "node build/server.js",
+    "lint:tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:generate": "npx prisma generate"
   },
